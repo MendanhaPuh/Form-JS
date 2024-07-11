@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+    <title>Formulário de Produtos com Anexos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #666b70;
+        }
+        .material-symbols-outlined {
+            font-variation-settings:
+            'FILL' 0,
+            'wght' 300,
+            'GRAD' 0,
+            'opsz' 24;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .product, .attachment {
+            background: #f9f9f9;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        .product label, .attachment label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .product input, .product select, .attachment input {
+            width: calc(100% - 20px);
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .remove-product {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .attachment-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .attachment-list li {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #e9e9e9;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 5px;
+        }
+        .attachment-list li span {
+            flex-grow: 1;
+        }
+        .remove-product {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .remove-product:hover {
+            background-color: rgb(94, 0, 0);
+            color: rgb(255, 255, 255);
+        }
+        .ExcluirArquivo{
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .address {
+            background: #f9f9f9;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .address label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .address input {
+            width: calc(100% - 20px);
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            margin-top: 0px;
+            margin-right: 10px;
+            font-size: 16px;
+            color: white;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .btn:focus, .btn:hover {
+            background-color: #0056b3;
+        }
+        .titulo{
+            text-align: center;
+            color: #f9f9f9;
+            font: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="titulo">
+        <h1>Formulário</h1>
+    </div>
+    <div class="container">
+        <div id="address-container" class="address">
+            <label for="cep">CEP</label>
+            <input type="text" id="cep" required>
+
+            <label for="street">Rua</label>
+            <input type="text" id="street" required>
+
+            <label for="neighborhood">Bairro</label>
+            <input type="text" id="neighborhood" required>
+
+            <label for="city">Cidade</label>
+            <input type="text" id="city" required>
+
+            <label for="state">Estado</label>
+            <input type="text" id="state" required>
+        </div>
+    </div>
+    <div class="container">
+        <div id="products-container">
+            <div class="product">
+                <button class="remove-product">Remover Produto</button>
+                <label>Nome</label>
+                <input type="text" class="name" required>
+                <label>Unidade de Medida</label>
+                <select class="unit">
+                    <option value="kg">Quilograma</option>
+                    <option value="g">Grama</option>
+                    <option value="m">Metro</option>
+                    <option value="cm">Centímetro</option>
+                    <option value="l">Litro</option>
+                    <option value="ml">Mililitro</option>
+                    <option value="box">Caixa</option>
+                </select>
+                <label>Quantidade</label>
+                <input type="number" class="quantity" required>
+                <label>Valor Unitário</label>
+                <input type="number" class="unit-price" required>
+                <label>Valor Total</label>
+                <input type="text" class="total-price" readonly>
+            </div>
+        </div>
+        <button id="add-product" class="btn" style="margin-bottom: 40px;">Adicionar Produto</button>
+
+        <div id="attachments-container" class="attachment">
+            <label>Anexos</label>
+            <input type="file" id="attachment-input" multiple>
+            <ul id="attachment-list" class="attachment-list"></ul>
+        </div>
+
+        <button id="submit-form" class="btn">Enviar</button>
+    </div>
+
+    <script>
+        document.getElementById('add-product').addEventListener('click', addProduct);
+        document.getElementById('products-container').addEventListener('input', calculateTotal);
+        document.getElementById('products-container').addEventListener('click', handleRemoveProduct);
+        document.getElementById('attachment-input').addEventListener('change', handleFileSelect);
+
+        function addProduct() {
+            const productContainer = document.createElement('div');
+            productContainer.classList.add('product');
+            
+            productContainer.innerHTML = `
+                <button class="remove-product">Remover Produto</button>
+                <label>Nome</label>
+                <input type="text" class="name" required>
+                <label>Unidade de Medida</label>
+                <select class="unit">
+                    <option value="kg">Quilograma</option>
+                    <option value="g">Grama</option>
+                    <option value="m">Metro</option>
+                    <option value="cm">Centímetro</option>
+                    <option value="l">Litro</option>
+                    <option value="ml">Mililitro</option>
+                    <option value="box">Caixa</option>
+                </select>
+                <label>Quantidade</label>
+                <input type="number" class="quantity" required>
+                <label>Valor Unitário</label>
+                <input type="number" class="unit-price" required>
+                <label>Valor Total</label>
+                <input type="text" class="total-price" readonly>
+            `;
+            
+            document.getElementById('products-container').appendChild(productContainer);
+        }
+
+        function calculateTotal(event) {
+            const productElement = event.target.closest('.product');
+            const quantity = parseFloat(productElement.querySelector('.quantity').value) || 0;
+            const unitPrice = parseFloat(productElement.querySelector('.unit-price').value) || 0;
+            const totalPriceElement = productElement.querySelector('.total-price');
+            const totalPrice = quantity * unitPrice;
+            totalPriceElement.value = totalPrice.toFixed(2);
+        }
+
+        function handleRemoveProduct(event) {
+            if (event.target.classList.contains('remove-product')) {
+                event.target.closest('.product').remove();
+            }
+        }
+
+        function handleFileSelect(event) {
+            const files = event.target.files;
+            const attachmentList = document.getElementById('attachment-list');
+            
+            for (const file of files) {
+                const listItem = document.createElement('li');
+                const fileName = document.createElement('span');
+                fileName.textContent = file.name;
+                
+                const deleteButton = document.createElement('button');
+                deleteButton.className = 'ExcluirArquivo';
+                deleteButton.innerHTML = '<span class="material-symbols-outlined">delete</span>';
+                deleteButton.addEventListener('click', () => {
+                    listItem.remove();
+                });
+
+                listItem.appendChild(fileName);
+                listItem.appendChild(deleteButton);
+                attachmentList.appendChild(listItem);
+            }
+
+            // Limpa o valor de entrada do arquivo para permitir o reenvio do mesmo arquivo, se necessário
+            event.target.value = '';
+        }
+
+        function submitForm() {
+            const cep = document.getElementById('cep').value;
+            const street = document.getElementById('street').value;
+            const neighborhood = document.getElementById('neighborhood').value;
+            const city = document.getElementById('city').value;
+            const state = document.getElementById('state').value;
+
+            const data = {
+                cep,
+                street,
+                neighborhood,
+                city,
+                state
+            };
+
+            fetch('/save-data', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                alert(result.message);
+            })
+            .catch(error => {
+                console.error('Erro ao enviar os dados:', error);
+                alert('Erro ao enviar os dados!');
+            });
+        }
+
+
+
+        document.getElementById('cep').addEventListener('blur', fetchAddress);
+
+        function fetchAddress() {
+            const cep = document.getElementById('cep').value.replace(/\D/g, '');
+
+            if (cep.length !== 8) {
+                alert('CEP inválido!');
+                return;
+            }
+
+            const url = `https://viacep.com.br/ws/${cep}/json/`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.erro) {
+                        alert('CEP não encontrado!');
+                        return;
+                    }
+
+                    document.getElementById('street').value = data.logradouro;
+                    document.getElementById('neighborhood').value = data.bairro;
+                    document.getElementById('city').value = data.localidade;
+                    document.getElementById('state').value = data.uf;
+                })
+                .catch(error => {
+                    console.error('Erro ao buscar o CEP:', error);
+                    alert('Erro ao buscar o CEP!');
+                });
+        }
+
+
+
+    </script>
+</body>
+</html>
